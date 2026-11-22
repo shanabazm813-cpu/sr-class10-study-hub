@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SR Class 10 Study Hub</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:white}
+header{padding:35px 20px;text-align:center;background:linear-gradient(135deg,#123b70,#673ab7)}
+h1{font-size:30px;margin:10px}
+p{line-height:1.6;color:#dbe5ff}
+main{max-width:850px;margin:auto;padding:20px}
+.card{background:#18233d;padding:20px;border:1px solid #42547b;border-radius:15px;margin:15px 0}
+a,button{display:inline-block;padding:12px 18px;border:1px solid #64c7ff;border-radius:10px;color:white;background:#163c63;text-decoration:none;margin:5px;cursor:pointer}
+a:hover,button:hover{background:#28679b}
+input{width:100%;padding:14px;border-radius:10px;border:1px solid #64c7ff;background:#111b30;color:white}
+footer{text-align:center;padding:25px;color:#9eafd0}
+</style>
+</head>
+<body>
+<header>
+<h1>SR Class 10 Study Hub</h1>
+<p>कक्षा 10 की पढ़ाई अब आसान</p>
+</header>
+<main>
+<div class="card">
+<h2>📚 हमारे विषय</h2>
+<p>गणित • विज्ञान • हिंदी • अंग्रेज़ी • सामाजिक विज्ञान</p>
+</div>
+<div class="card">
+<h2>🔎 पढ़ाई के लिंक</h2>
+<a href="https://ncert.nic.in/textbook.php">NCERT किताबें</a>
+<a href="https://epathshala.nic.in/">ePathshala</a>
+<a href="https://upmsp.edu.in/">UP Board</a>
+</div>
+<div class="card">
+<h2>🧮 गणित का छोटा टेस्ट</h2>
+<p>5 × 5 कितना होता है?</p>
+<button onclick="check(20)">20</button>
+<button onclick="check(25)">25</button>
+<button onclick="check(30)">30</button>
+<p id="result"></p>
+</div>
+</main>
+<footer>© 2026 SR Class 10 Study Hub</footer>
+<script>
+function check(n){
+document.getElementById("result").textContent=
+n===25?"सही जवाब! शाबाश!":"फिर कोशिश करो।";
+}
+</script>
+</body>
+</html>
