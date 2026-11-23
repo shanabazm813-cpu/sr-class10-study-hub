@@ -5,96 +5,338 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SR Class 10 Study Hub</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#0b1020;color:white}
-header{padding:35px 20px;text-align:center;background:linear-gradient(135deg,#123b70,#673ab7)}
-h1{font-size:30px;margin:10px}
-p{line-height:1.6;color:#dbe5ff}
-main{max-width:850px;margin:auto;padding:20px}
-.card{background:#18233d;padding:20px;border:1px solid #42547b;border-radius:15px;margin:15px 0}
-a,button{display:inline-block;padding:12px 18px;border:1px solid #64c7ff;border-radius:10px;color:white;background:#163c63;text-decoration:none;margin:5px;cursor:pointer}
-a:hover,button:hover{background:#28679b}
-input{width:100%;padding:14px;border-radius:10px;border:1px solid #64c7ff;background:#111b30;color:white}
-footer{text-align:center;padding:25px;color:#9eafd0}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f7fb;
+  color:#172033;
+}
+header{
+  background:linear-gradient(135deg,#2563eb,#7c3aed);
+  color:white;
+  padding:25px 16px;
+  text-align:center;
+}
+header h1{margin:0 0 8px;font-size:28px}
+header p{margin:0}
+nav{
+  background:white;
+  padding:12px;
+  text-align:center;
+  box-shadow:0 2px 8px #0001;
+}
+nav a{
+  color:#2563eb;
+  text-decoration:none;
+  font-weight:bold;
+  margin:8px;
+}
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
+.panel{
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  margin-bottom:20px;
+  box-shadow:0 5px 20px #0000000b;
+}
+select,input,button{
+  width:100%;
+  padding:12px;
+  margin:7px 0;
+  border:1px solid #d7deea;
+  border-radius:10px;
+  font-size:16px;
+}
+button{
+  background:#2563eb;
+  color:white;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:hover{background:#1d4ed8}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+}
+.card{
+  background:white;
+  padding:18px;
+  border-radius:14px;
+  border:1px solid #e5eaf2;
+  box-shadow:0 4px 12px #00000008;
+}
+.card h3{margin-top:0;color:#2563eb}
+.chapter{
+  display:block;
+  width:100%;
+  text-align:left;
+  background:#eef4ff;
+  color:#172033;
+  margin:8px 0;
+}
+#message{
+  background:#eef4ff;
+  padding:15px;
+  border-radius:10px;
+  line-height:1.7;
+}
+footer{
+  text-align:center;
+  padding:25px;
+  color:#64748b;
+}
 </style>
 </head>
+
 <body>
+
 <header>
-<h1>SR Class 10 Study Hub</h1>
-<p>कक्षा 10 की पढ़ाई अब आसान</p>
+  <h1>📚 SR Class 10 Study Hub</h1>
+  <p>पढ़ाई आसान बनाओ, सफलता पाओ!</p>
 </header>
-<main>
-<div class="card">
-<h2>📚 हमारे विषय</h2>
-<p>गणित • विज्ञान • हिंदी • अंग्रेज़ी • सामाजिक विज्ञान</p>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#subjects">Subjects</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#login">Login</a>
+</nav>
+
+<div class="container" id="home">
+
+  <section class="panel">
+    <h2>अपनी पढ़ाई शुरू करें</h2>
+    <p>अपना बोर्ड और कक्षा चुनें।</p>
+
+    <select id="board">
+      <option>UP Board</option>
+      <option>CBSE</option>
+    </select>
+
+    <select id="className">
+      <option value="10">Class 10</option>
+      <option value="12">Class 12</option>
+    </select>
+
+    <input id="search" placeholder="विषय या अध्याय खोजें..." oninput="searchSubjects()">
+  </section>
+
+  <section class="panel" id="subjects">
+    <h2>📖 विषय चुनें</h2>
+    <div class="grid" id="subjectGrid"></div>
+  </section>
+
+  <section class="panel">
+    <h2>📘 अध्याय</h2>
+    <div id="chapterList">
+      <p>अध्याय देखने के लिए कोई विषय चुनें।</p>
+    </div>
+  </section>
+
+  <section class="panel" id="quiz">
+    <h2>🧠 छोटा Quiz</h2>
+    <p id="question">भारत की राजधानी क्या है?</p>
+    <button onclick="checkAnswer('दिल्ली')">दिल्ली</button>
+    <button onclick="checkAnswer('मुंबई')">मुंबई</button>
+    <button onclick="checkAnswer('लखनऊ')">लखनऊ</button>
+    <p id="quizResult"></p>
+  </section>
+
+  <section class="panel" id="login">
+    <h2>🔐 Student Login (Demo)</h2>
+    <input id="studentName" placeholder="अपना नाम लिखें">
+    <button onclick="demoLogin()">Login</button>
+    <button onclick="googleDemo()">Google Login</button>
+    <p id="loginResult"></p>
+  </section>
+
 </div>
-<div class="card">
-<h2>🔎 पढ़ाई के लिंक</h2>
-<a href="https://ncert.nic.in/textbook.php">NCERT किताबें</a>
-<a href="https://epathshala.nic.in/">ePathshala</a>
-<a href="https://upmsp.edu.in/">UP Board</a>
-</div>
-<div class="card">
-<h2>🧮 गणित का छोटा टेस्ट</h2>
-<p>5 × 5 कितना होता है?</p>
-<button onclick="check(20)">20</button>
-<button onclick="check(25)">25</button>
-<button onclick="check(30)">30</button>
-<p id="result"></p>
-</div>
-</main>
-<footer>© 2026 SR Class 10 Study Hub</footer>
+
+<footer>
+  © 2026 SR Class 10 Study Hub
+  <br>
+  मेहनत ही सफलता की चाबी है!
+</footer>
+
 <script>
-function check(n){
-document.getElementById("result").textContent=
-n===25?"सही जवाब! शाबाश!":"फिर कोशिश करो।";
+const subjects = [
+  {
+    name:"Mathematics",
+    icon:"➗",
+    chapters:[
+      "वास्तविक संख्याएँ",
+      "बहुपद",
+      "दो चर वाले रैखिक समीकरण",
+      "द्विघात समीकरण",
+      "समांतर श्रेढ़ियाँ",
+      "त्रिभुज",
+      "निर्देशांक ज्यामिति",
+      "त्रिकोणमिति",
+      "वृत्त",
+      "वृत्तों से संबंधित क्षेत्रफल",
+      "पृष्ठीय क्षेत्रफल और आयतन",
+      "सांख्यिकी",
+      "प्रायिकता"
+    ]
+  },
+  {
+    name:"Science",
+    icon:"🔬",
+    chapters:[
+      "रासायनिक अभिक्रियाएँ",
+      "अम्ल, क्षार और लवण",
+      "धातु और अधातु",
+      "कार्बन और उसके यौगिक",
+      "जीवन प्रक्रियाएँ",
+      "नियंत्रण और समन्वय",
+      "जीव जनन कैसे करते हैं",
+      "आनुवंशिकता",
+      "प्रकाश",
+      "मानव नेत्र",
+      "विद्युत",
+      "विद्युत धारा के चुंबकीय प्रभाव",
+      "हमारा पर्यावरण"
+    ]
+  },
+  {
+    name:"Hindi",
+    icon:"📝",
+    chapters:[
+      "गद्य",
+      "पद्य",
+      "व्याकरण",
+      "लेखन कौशल"
+    ]
+  },
+  {
+    name:"English",
+    icon:"🔤",
+    chapters:[
+      "Reading",
+      "Writing",
+      "Grammar",
+      "Literature"
+    ]
+  },
+  {
+    name:"Social Science",
+    icon:"🌍",
+    chapters:[
+      "इतिहास",
+      "भूगोल",
+      "राजनीति विज्ञान",
+      "अर्थशास्त्र"
+    ]
+  },
+  {
+    name:"General Knowledge",
+    icon:"💡",
+    chapters:[
+      "भारत सामान्य ज्ञान",
+      "विश्व सामान्य ज्ञान",
+      "विज्ञान GK",
+      "Current Affairs"
+    ]
+  }
+];
+
+function showSubjects(list=subjects){
+  const grid=document.getElementById("subjectGrid");
+  grid.innerHTML="";
+
+  list.forEach(subject=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=
+      "<h3>"+subject.icon+" "+subject.name+"</h3>"+
+      "<p>"+subject.chapters.length+" अध्याय/विषय</p>"+
+      "<button>अध्याय देखें</button>";
+
+    card.querySelector("button").onclick=()=>{
+      showChapters(subject);
+    };
+
+    grid.appendChild(card);
+  });
 }
+
+function showChapters(subject){
+  const list=document.getElementById("chapterList");
+  list.innerHTML="<h3>"+subject.name+"</h3>";
+
+  subject.chapters.forEach((chapter,index)=>{
+    const button=document.createElement("button");
+    button.className="chapter";
+    button.textContent=(index+1)+". "+chapter;
+
+    button.onclick=()=>{
+      document.getElementById("message")?.remove();
+
+      const info=document.createElement("div");
+      info.id="message";
+      info.innerHTML=
+        "<h3>"+chapter+"</h3>"+
+        "<p>इस अध्याय के नोट्स और प्रश्न-उत्तर यहाँ जोड़े जाएँगे।</p>"+
+        "<p>अभी यह वेबसाइट का शुरुआती संस्करण है।</p>";
+
+      list.appendChild(info);
+    };
+
+    list.appendChild(button);
+  });
+}
+
+function searchSubjects(){
+  const value=document.getElementById("search").value.toLowerCase();
+
+  const filtered=subjects.filter(subject=>
+    subject.name.toLowerCase().includes(value) ||
+    subject.chapters.some(chapter=>
+      chapter.toLowerCase().includes(value)
+    )
+  );
+
+  showSubjects(filtered);
+}
+
+function checkAnswer(answer){
+  const result=document.getElementById("quizResult");
+
+  if(answer==="दिल्ली"){
+    result.textContent="✅ सही जवाब! दिल्ली भारत की राजधानी है।";
+  }else{
+    result.textContent="❌ गलत जवाब। फिर से कोशिश करो!";
+  }
+}
+
+function demoLogin(){
+  const name=document.getElementById("studentName").value.trim();
+
+  if(!name){
+    document.getElementById("loginResult").textContent=
+      "कृपया अपना नाम लिखें।";
+    return;
+  }
+
+  document.getElementById("loginResult").textContent=
+    "नमस्ते "+name+"! यह अभी Demo Login है।";
+}
+
+function googleDemo(){
+  alert("Google Login चालू करने के लिए Firebase Authentication सेटअप करना होगा।");
+}
+
+showSubjects();
 </script>
+
 </body>
 </html>
-
-<section style="padding:20px; font-family:Arial;">
-
-  <h2>📚 कक्षा 10 अध्ययन केंद्र</h2>
-
-  <details>
-    <summary>📖 जीवन परिचय</summary>
-    <h3>मुंशी प्रेमचंद</h3>
-    <p>
-      मुंशी प्रेमचंद हिंदी और उर्दू के प्रसिद्ध लेखक थे।
-      उन्हें उपन्यास सम्राट कहा जाता है।
-    </p>
-    <p>प्रमुख रचनाएँ: गोदान, गबन, निर्मला।</p>
-  </details>
-
-  <details>
-    <summary>🔬 विज्ञान के प्रश्न</summary>
-
-    <p><b>प्रश्न 1:</b> प्रकाश संश्लेषण क्या है?</p>
-    <p>
-      उत्तर: वह प्रक्रिया जिसमें हरे पौधे सूर्य के प्रकाश
-      की सहायता से भोजन बनाते हैं।
-    </p>
-
-    <p><b>प्रश्न 2:</b> मानव हृदय में कितने कक्ष होते हैं?</p>
-    <p>उत्तर: चार कक्ष।</p>
-
-    <p><b>प्रश्न 3:</b> पानी का रासायनिक सूत्र क्या है?</p>
-    <p>उत्तर: H₂O</p>
-  </details>
-
-  <details>
-    <summary>➗ गणित के प्रश्न</summary>
-
-    <p><b>प्रश्न 1:</b> 2x + 4 = 10, x ज्ञात करो।</p>
-    <p>उत्तर: x = 3</p>
-
-    <p><b>प्रश्न 2:</b> 15 का वर्ग कितना है?</p>
-    <p>उत्तर: 225</p>
-
-    <p><b>प्रश्न 3:</b> त्रिभुज के तीनों कोणों का योग कितना होता है?</p>
-    <p>उत्तर: 180°</p>
-  </details>
-
-</section>
