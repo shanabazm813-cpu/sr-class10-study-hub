@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StudySetu | Class 10 & 12</title>
+<style>
+:root{--navy:#10233f;--blue:#2563eb;--cyan:#06b6d4;--bg:#f4f7fb;--ink:#17243b;--muted:#64748b;--white:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Devanagari",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#10233f,#1d4ed8);color:white;padding:30px 5vw 38px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.brand{font-weight:800;font-size:1.35rem;letter-spacing:.3px}.navlinks a{color:#eaf2ff;text-decoration:none;margin-left:18px}
+.hero{max-width:900px}.hero h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.12;margin:0 0 12px}.hero p{color:#dbeafe;font-size:1.08rem;max-width:700px}
+.search{display:flex;gap:10px;max-width:720px;margin-top:22px}.search input{flex:1;min-width:0;padding:14px 16px;border:0;border-radius:12px;font-size:1rem}.search button,.btn{border:0;border-radius:10px;padding:12px 17px;background:var(--cyan);color:#06243a;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+main{max-width:1120px;margin:auto;padding:28px 5vw 60px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin:20px 0}
+.section-head h2{margin:0;font-size:1.6rem}.muted{color:var(--muted)}
+.classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.class-card,.subject,.resource{background:white;border:1px solid #e5eaf2;border-radius:18px;padding:20px;box-shadow:0 8px 24px #10233f08}
+.class-card h3{margin:0 0 6px}.class-card p{color:var(--muted);margin:0 0 16px}
+.subjects{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.subject h3{margin:0 0 10px}.subject a,.resource a{color:var(--blue);text-decoration:none;font-weight:600}
+.subject ul{padding-left:20px;margin:8px 0 0;color:var(--muted);line-height:1.9}
+.resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.resource h3{margin:0 0 8px}.resource p{color:var(--muted);margin:0 0 12px}
+.notice{background:#eff6ff;border:1px solid #bfdbfe;padding:14px 16px;border-radius:12px;color:#1e3a8a;margin:20px 0}
+footer{background:var(--navy);color:#dbeafe;padding:24px 5vw;text-align:center}
+.hidden{display:none!important}
+@media(max-width:600px){.navlinks a{margin-left:8px}.search{flex-direction:column}.search button{width:100%}}
+</style>
+</head>
+<body>
+<header>
+<nav><div class="brand">📘 StudySetu</div><div class="navlinks"><a href="#classes">कक्षाएँ</a><a href="#subjects">विषय</a><a href="#resources">संसाधन</a></div></nav>
+<div class="hero">
+<h1>कक्षा 10 और 12 की पढ़ाई,<br>एक ही जगह</h1>
+<p>NCERT आधारित नोट्स, महत्वपूर्ण प्रश्न, हल किए गए अभ्यास और परीक्षा की तैयारी के लिए आपका अध्ययन साथी।</p>
+<div class="search"><input id="search" type="search" placeholder="विषय या सामग्री खोजें…"><button onclick="filterItems()">खोजें</button></div>
+</div>
+</header>
+<main>
+<div class="section-head" id="classes"><h2>अपनी कक्षा चुनें</h2><span class="muted">Class 10 • Class 12</span></div>
+<div class="classes">
+<article class="class-card"><h3>कक्षा 10 — हाई स्कूल</h3><p>बोर्ड परीक्षा के लिए विषयवार तैयारी</p><a class="btn" href="#class10">कक्षा 10 खोलें</a></article>
+<article class="class-card"><h3>कक्षा 12 — इंटरमीडिएट</h3><p>स्ट्रीम और विषय के अनुसार अध्ययन सामग्री</p><a class="btn" href="#class12">कक्षा 12 खोलें</a></article>
+</div>
+<div class="section-head" id="subjects"><h2>विषयवार अध्ययन सामग्री</h2><span class="muted">नीचे लिंक/फाइलें अपनी सामग्री से बदलें</span></div>
+<div class="subjects">
+<article class="subject searchable"><h3>गणित</h3><ul><li><a href="#resources">अध्यायवार नोट्स</a></li><li><a href="#resources">हल किए गए प्रश्न</a></li><li><a href="#resources">मॉडल पेपर</a></li></ul></article>
+<article class="subject searchable"><h3>विज्ञान</h3><ul><li><a href="#resources">भौतिकी / रसायन / जीवविज्ञान</a></li><li><a href="#resources">महत्वपूर्ण प्रश्न</a></li><li><a href="#resources">प्रैक्टिस पेपर</a></li></ul></article>
+<article class="subject searchable"><h3>सामाजिक विज्ञान</h3><ul><li><a href="#resources">इतिहास</a></li><li><a href="#resources">भूगोल</a></li><li><a href="#resources">नागरिक शास्त्र / अर्थशास्त्र</a></li></ul></article>
+<article class="subject searchable"><h3>हिंदी</h3><ul><li><a href="#resources">पाठ सारांश</a></li><li><a href="#resources">लेखक / कवि परिचय</a></li><li><a href="#resources">व्याकरण व लेखन</a></li></ul></article>
+<article class="subject searchable"><h3>अंग्रेज़ी</h3><ul><li><a href="#resources">Chapter summaries</a></li><li><a href="#resources">Grammar & writing</a></li><li><a href="#resources">Important questions</a></li></ul></article>
+<article class="subject searchable"><h3>अन्य विषय</h3><ul><li><a href="#resources">संस्कृत / कंप्यूटर</a></li><li><a href="#resources">वैकल्पिक विषय</a></li><li><a href="#resources">स्ट्रीम के अनुसार विषय</a></li></ul></article>
+</div>
+<div class="section-head" id="resources"><h2>पढ़ाई के संसाधन</h2></div>
+<div class="resource-grid">
+<article class="resource searchable"><h3>📚 NCERT की आधिकारिक पुस्तकें</h3><p>मूल पाठ्यपुस्तकों और अध्यायों के लिए आधिकारिक स्रोत।</p><a href="https://ncert.nic.in/textbook.php" target="_blank" rel="noopener">NCERT पुस्तकें खोलें ↗</a></article>
+<article class="resource searchable"><h3>📝 नोट्स और अध्याय सार</h3><p>यहाँ अपनी PDF या Google Drive नोट्स का लिंक लगाएँ।</p><a href="#" onclick="alert('इस लिंक को अपनी नोट्स PDF/Drive लिंक से बदलें');return false">नोट्स देखें</a></article>
+<article class="resource searchable"><h3>✍️ हल किए गए सवाल</h3><p>गणित, विज्ञान और अन्य विषयों के प्रश्न-उत्तर जोड़ें।</p><a href="#" onclick="alert('यहाँ solved questions की PDF या पेज का लिंक जोड़ें');return false">प्रश्न हल करें</a></article>
+<article class="resource searchable"><h3>📄 पिछले वर्ष / मॉडल पेपर</h3><p>केवल अनुमति-प्राप्त या आधिकारिक रूप से उपलब्ध पेपर लिंक करें।</p><a href="#" onclick="alert('यहाँ वैध question paper लिंक जोड़ें');return false">पेपर खोलें</a></article>
+<article class="resource searchable"><h3>👨‍🏫 लेखक और कवि परिचय</h3><p>जीवन परिचय, रचनाएँ और परीक्षा उपयोगी बिंदु।</p><a href="#" onclick="alert('यहाँ author/poet profile pages जोड़ें');return false">परिचय पढ़ें</a></article>
+<article class="resource searchable"><h3>🎯 परीक्षा तैयारी</h3><p>महत्वपूर्ण प्रश्न, revision checklist और mock tests।</p><a href="#" onclick="alert('यहाँ revision plan या quiz लिंक जोड़ें');return false">तैयारी शुरू करें</a></article>
+</div>
+<div class="notice"><strong>ध्यान दें:</strong> अभी यह वेबसाइट का शुरुआती template है। इसमें अपने नोट्स, PDF, प्रश्न-उत्तर और बोर्ड/स्ट्रीम के अनुसार सही सामग्री के लिंक जोड़ने होंगे। NCERT/बोर्ड की सामग्री के कॉपीराइट का सम्मान करें और जहाँ आवश्यक हो स्रोत दें।</div>
+<div class="section-head" id="class10"><h2>कक्षा 10</h2></div><p class="muted">कक्षा 10 के लिए ऊपर दिए विषयों में अध्यायवार सामग्री जोड़ें।</p>
+<div class="section-head" id="class12"><h2>कक्षा 12</h2></div><p class="muted">कक्षा 12 में Science, Commerce या Humanities के अनुसार विषयों के अलग पेज बनाएं।</p>
+</main>
+<footer>StudySetu • सीखें, अभ्यास करें, आगे बढ़ें<br><small>यह स्वतंत्र अध्ययन वेबसाइट है; NCERT/बोर्ड की आधिकारिक वेबसाइट नहीं।</small></footer>
+<script>
+function filterItems(){
+ const q=document.getElementById('search').value.trim().toLowerCase();
+ document.querySelectorAll('.searchable').forEach(el=>el.classList.toggle('hidden',q&&!el.innerText.toLowerCase().includes(q)));
+}
+document.getElementById('search').addEventListener('keydown',e=>{if(e.key==='Enter')filterItems()});
+</script>
+</body>
+</html>
