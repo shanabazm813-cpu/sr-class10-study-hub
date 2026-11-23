@@ -1,541 +1,207 @@
 
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SR Class 10 Study Hub</title>
+function openChapter(chapter) {
+  const subject = selected;
+  const key = subject + "|" + chapter;
+  const storageKey = "SR_CLASS10_QUESTION_BANK";
 
-<style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f4f7fb;
-  color:#172033;
-}
-header{
-  background:linear-gradient(135deg,#2563eb,#7c3aed);
-  color:white;
-  padding:25px 16px;
-  text-align:center;
-}
-header h1{margin:0 0 8px;font-size:28px}
-header p{margin:0}
-nav{
-  background:white;
-  padding:12px;
-  text-align:center;
-  box-shadow:0 2px 8px #0001;
-}
-nav a{
-  color:#2563eb;
-  text-decoration:none;
-  font-weight:bold;
-  margin:8px;
-}
-.container{
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
-}
-.panel{
-  background:white;
-  padding:20px;
-  border-radius:16px;
-  margin-bottom:20px;
-  box-shadow:0 5px 20px #0000000b;
-}
-select,input,button{
-  width:100%;
-  padding:12px;
-  margin:7px 0;
-  border:1px solid #d7deea;
-  border-radius:10px;
-  font-size:16px;
-}
-button{
-  background:#2563eb;
-  color:white;
-  border:none;
-  font-weight:bold;
-  cursor:pointer;
-}
-button:hover{background:#1d4ed8}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-}
-.card{
-  background:white;
-  padding:18px;
-  border-radius:14px;
-  border:1px solid #e5eaf2;
-  box-shadow:0 4px 12px #00000008;
-}
-.card h3{margin-top:0;color:#2563eb}
-.chapter{
-  display:block;
-  width:100%;
-  text-align:left;
-  background:#eef4ff;
-  color:#172033;
-  margin:8px 0;
-}
-#message{
-  background:#eef4ff;
-  padding:15px;
-  border-radius:10px;
-  line-height:1.7;
-}
-footer{
-  text-align:center;
-  padding:25px;
-  color:#64748b;
-}
-</style>
-</head>
+  function getBank() {
+    try {
+      return JSON.parse(localStorage.getItem(storageKey) || "{}");
+    } catch {
+      return {};
+    }
+  }
 
-<body>
+  function saveBank(bank) {
+    localStorage.setItem(storageKey, JSON.stringify(bank));
+  }
 
-<header>
-  <h1>📚 SR Class 10 Study Hub</h1>
-  <p>पढ़ाई आसान बनाओ, सफलता पाओ!</p>
-</header>
+  const bank = getBank();
+  const questions = bank[key] || [];
 
-<nav>
-  <a href="#home">Home</a>
-  <a href="#subjects">Subjects</a>
-  <a href="#quiz">Quiz</a>
-  <a href="#login">Login</a>
-</nav>
+  const modal = document.createElement("div");
+  modal.className = "modal-back open";
 
-<div class="container" id="home">
+  modal.innerHTML = `
+    <div class="modal" style="width:min(100%,720px)">
+      <div class="modal-head">
+        <h2>${chapter}</h2>
+        <button class="close">×</button>
+      </div>
 
-  <section class="panel">
-    <h2>अपनी पढ़ाई शुरू करें</h2>
-    <p>अपना बोर्ड और कक्षा चुनें।</p>
+      <p class="sub">
+        ${subject} • अध्यायवार प्रश्न-उत्तर
+      </p>
 
-    <select id="board">
-      <option>UP Board</option>
-      <option>CBSE</option>
-    </select>
+      <div id="questionList"></div>
 
-    <select id="className">
-      <option value="10">Class 10</option>
-      <option value="12">Class 12</option>
-    </select>
+      <details style="margin-top:20px">
+        <summary style="font-weight:bold;cursor:pointer">
+          + नया प्रश्न जोड़ें
+        </summary>
 
-    <input id="search" placeholder="विषय या अध्याय खोजें..." oninput="searchSubjects()">
-  </section>
+        <form id="addQuestion"
+          style="display:grid;gap:12px;margin-top:15px">
 
-  <section class="panel" id="subjects">
-    <h2>📖 विषय चुनें</h2>
-    <div class="grid" id="subjectGrid"></div>
-  </section>
+          <textarea name="question"
+            placeholder="प्रश्न लिखें"
+            required rows="3"
+            style="padding:12px;border:1px solid #ddd;border-radius:10px">
+          </textarea>
 
-  <section class="panel">
-    <h2>📘 अध्याय</h2>
-    <div id="chapterList">
-      <p>अध्याय देखने के लिए कोई विषय चुनें।</p>
+          <textarea name="answer"
+            placeholder="उत्तर या हल लिखें"
+            required rows="4"
+            style="padding:12px;border:1px solid #ddd;border-radius:10px">
+          </textarea>
+
+          <select name="type"
+            style="padding:12px;border:1px solid #ddd;border-radius:10px">
+            <option>महत्वपूर्ण प्रश्न</option>
+            <option>लघु उत्तरीय</option>
+            <option>दीर्घ उत्तरीय</option>
+            <option>बहुविकल्पीय प्रश्न</option>
+          </select>
+
+          <button class="primary" type="submit">
+            प्रश्न सुरक्षित करें
+          </button>
+        </form>
+      </details>
+
+      <button class="primary" id="downloadQuestions"
+        style="margin-top:15px">
+        प्रश्न डाउनलोड करें
+      </button>
     </div>
-  </section>
+  `;
 
-  <section class="panel" id="quiz">
-    <h2>🧠 छोटा Quiz</h2>
-    <p id="question">भारत की राजधानी क्या है?</p>
-    <button onclick="checkAnswer('दिल्ली')">दिल्ली</button>
-    <button onclick="checkAnswer('मुंबई')">मुंबई</button>
-    <button onclick="checkAnswer('लखनऊ')">लखनऊ</button>
-    <p id="quizResult"></p>
-  </section>
+  document.body.appendChild(modal);
 
-  <section class="panel" id="login">
-    <h2>🔐 Student Login (Demo)</h2>
-    <input id="studentName" placeholder="अपना नाम लिखें">
-    <button onclick="demoLogin()">Login</button>
-    <button onclick="googleDemo()">Google Login</button>
-    <p id="loginResult"></p>
-  </section>
+  function renderQuestions() {
+    const list = modal.querySelector("#questionList");
+    const current = getBank()[key] || [];
 
-</div>
+    if (current.length === 0) {
+      list.innerHTML = `
+        <p class="notice">
+          अभी इस अध्याय में प्रश्न नहीं हैं।
+          नीचे नया प्रश्न जोड़ें।
+        </p>
+      `;
+      return;
+    }
 
-<footer>
-  © 2026 SR Class 10 Study Hub
-  <br>
-  मेहनत ही सफलता की चाबी है!
-</footer>
+    list.innerHTML = current.map((item, i) => `
+      <div style="
+        background:white;
+        border:1px solid #e6eaf4;
+        border-radius:14px;
+        padding:15px;
+        margin:12px 0">
 
-<script>
-const subjects = [
-  {
-    name:"Mathematics",
-    icon:"➗",
-    chapters:[
-      "वास्तविक संख्याएँ",
-      "बहुपद",
-      "दो चर वाले रैखिक समीकरण",
-      "द्विघात समीकरण",
-      "समांतर श्रेढ़ियाँ",
-      "त्रिभुज",
-      "निर्देशांक ज्यामिति",
-      "त्रिकोणमिति",
-      "वृत्त",
-      "वृत्तों से संबंधित क्षेत्रफल",
-      "पृष्ठीय क्षेत्रफल और आयतन",
-      "सांख्यिकी",
-      "प्रायिकता"
-    ]
-  },
-  {
-    name:"Science",
-    icon:"🔬",
-    chapters:[
-      "रासायनिक अभिक्रियाएँ",
-      "अम्ल, क्षार और लवण",
-      "धातु और अधातु",
-      "कार्बन और उसके यौगिक",
-      "जीवन प्रक्रियाएँ",
-      "नियंत्रण और समन्वय",
-      "जीव जनन कैसे करते हैं",
-      "आनुवंशिकता",
-      "प्रकाश",
-      "मानव नेत्र",
-      "विद्युत",
-      "विद्युत धारा के चुंबकीय प्रभाव",
-      "हमारा पर्यावरण"
-    ]
-  },
-  {
-    name:"Hindi",
-    icon:"📝",
-    chapters:[
-      "गद्य",
-      "पद्य",
-      "व्याकरण",
-      "लेखन कौशल"
-    ]
-  },
-  {
-    name:"English",
-    icon:"🔤",
-    chapters:[
-      "Reading",
-      "Writing",
-      "Grammar",
-      "Literature"
-    ]
-  },
-  {
-    name:"Social Science",
-    icon:"🌍",
-    chapters:[
-      "इतिहास",
-      "भूगोल",
-      "राजनीति विज्ञान",
-      "अर्थशास्त्र"
-    ]
-  },
-  {
-    name:"General Knowledge",
-    icon:"💡",
-    chapters:[
-      "भारत सामान्य ज्ञान",
-      "विश्व सामान्य ज्ञान",
-      "विज्ञान GK",
-      "Current Affairs"
-    ]
+        <small style="color:#4358db">
+          प्रश्न ${i + 1} • ${item.type}
+        </small>
+
+        <h3 style="font-size:16px;line-height:1.6">
+          ${escapeHTML(item.question)}
+        </h3>
+
+        <button class="primary"
+          data-answer="${i}">
+          उत्तर देखें
+        </button>
+
+        <div class="hidden"
+          data-answer-box="${i}"
+          style="
+            white-space:pre-wrap;
+            background:#f0faf5;
+            padding:12px;
+            margin-top:12px;
+            border-radius:10px">
+          ${escapeHTML(item.answer)}
+        </div>
+      </div>
+    `).join("");
+
+    list.querySelectorAll("[data-answer]").forEach(button => {
+      button.onclick = () => {
+        const box = list.querySelector(
+          '[data-answer-box="' + button.dataset.answer + '"]'
+        );
+
+        box.classList.toggle("hidden");
+
+        button.textContent =
+          box.classList.contains("hidden")
+          ? "उत्तर देखें"
+          : "उत्तर छिपाएँ";
+      };
+    });
   }
-];
 
-function showSubjects(list=subjects){
-  const grid=document.getElementById("subjectGrid");
-  grid.innerHTML="";
+  function escapeHTML(text) {
+    return String(text).replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
 
-  list.forEach(subject=>{
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=
-      "<h3>"+subject.icon+" "+subject.name+"</h3>"+
-      "<p>"+subject.chapters.length+" अध्याय/विषय</p>"+
-      "<button>अध्याय देखें</button>";
+  renderQuestions();
 
-    card.querySelector("button").onclick=()=>{
-      showChapters(subject);
-    };
+  modal.querySelector(".close").onclick = () => {
+    modal.remove();
+  };
 
-    grid.appendChild(card);
+  modal.addEventListener("click", event => {
+    if (event.target === modal) {
+      modal.remove();
+    }
   });
+
+  modal.querySelector("#addQuestion").onsubmit = event => {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+    const bank = getBank();
+
+    if (!bank[key]) {
+      bank[key] = [];
+    }
+
+    bank[key].push({
+      question: form.get("question").trim(),
+      answer: form.get("answer").trim(),
+      type: form.get("type")
+    });
+
+    saveBank(bank);
+    event.target.reset();
+    renderQuestions();
+
+    alert("प्रश्न सुरक्षित हो गया!");
+  };
+
+  modal.querySelector("#downloadQuestions").onclick = () => {
+    const data = getBank();
+
+    const blob = new Blob(
+      [JSON.stringify(data, null, 2)],
+      { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "SR-Class10-Questions.json";
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
 }
-
-function showChapters(subject){
-  const list=document.getElementById("chapterList");
-  list.innerHTML="<h3>"+subject.name+"</h3>";
-
-  subject.chapters.forEach((chapter,index)=>{
-    const button=document.createElement("button");
-    button.className="chapter";
-    button.textContent=(index+1)+". "+chapter;
-
-    button.onclick=()=>{
-      document.getElementById("message")?.remove();
-
-      const info=document.createElement("div");
-      info.id="message";
-      info.innerHTML=
-        "<h3>"+chapter+"</h3>"+
-        "<p>इस अध्याय के नोट्स और प्रश्न-उत्तर यहाँ जोड़े जाएँगे।</p>"+
-        "<p>अभी यह वेबसाइट का शुरुआती संस्करण है।</p>";
-
-      list.appendChild(info);
-    };
-
-    list.appendChild(button);
-  });
-}
-
-function searchSubjects(){
-  const value=document.getElementById("search").value.toLowerCase();
-
-  const filtered=subjects.filter(subject=>
-    subject.name.toLowerCase().includes(value) ||
-    subject.chapters.some(chapter=>
-      chapter.toLowerCase().includes(value)
-    )
-  );
-
-  showSubjects(filtered);
-}
-
-function checkAnswer(answer){
-  const result=document.getElementById("quizResult");
-
-  if(answer==="दिल्ली"){
-    result.textContent="✅ सही जवाब! दिल्ली भारत की राजधानी है।";
-  }else{
-    result.textContent="❌ गलत जवाब। फिर से कोशिश करो!";
-  }
-}
-
-function demoLogin(){
-  const name=document.getElementById("studentName").value.trim();
-
-  if(!name){
-    document.getElementById("loginResult").textContent=
-      "कृपया अपना नाम लिखें।";
-    return;
-  }
-
-  document.getElementById("loginResult").textContent=
-    "नमस्ते "+name+"! यह अभी Demo Login है।";
-}
-
-function googleDemo(){
-  alert("Google Login चालू करने के लिए Firebase Authentication सेटअप करना होगा।");
-}
-
-showSubjects();
-</script>
-
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SR Class 10 Study Hub</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f6fc;color:#172033}
-header{background:#173b72;color:white;padding:22px 14px;text-align:center}
-header h1{margin:0 0 8px;font-size:25px}
-main{max-width:900px;margin:auto;padding:16px}
-.panel{background:white;padding:16px;border-radius:13px;margin:12px 0;box-shadow:0 2px 10px #0001}
-select,input{width:100%;padding:12px;margin:7px 0;border:1px solid #bbc8d9;border-radius:8px;font-size:16px}
-h2{color:#174b88;font-size:20px}
-h3{font-size:17px}
-.question{border:1px solid #d9e2ef;padding:13px;border-radius:10px;margin:12px 0}
-.answer{background:#eef6ff;padding:12px;border-left:4px solid #2473c7;border-radius:7px;line-height:1.7}
-.tag{display:inline-block;background:#e4edff;color:#174b88;padding:4px 9px;border-radius:20px;font-size:12px}
-footer{text-align:center;padding:20px;color:#667}
-button{background:#1757a6;color:white;border:0;border-radius:8px;padding:11px 15px;font-size:15px}
-.small{font-size:13px;color:#667}
-</style>
-</head>
-<body>
-<header>
-<h1>SR Class 10 Study Hub</h1>
-<p>कक्षा 10 • सभी विषय • प्रश्न और पूरे हल</p>
-</header>
-
-<main>
-<div class="panel">
-<h2>अपना विषय चुनें</h2>
-<label>बोर्ड</label>
-<select id="board">
-<option>UP Board</option>
-<option>CBSE / NCERT</option>
-</select>
-
-<label>विषय</label>
-<select id="subject"></select>
-
-<label>अध्याय</label>
-<select id="chapter"></select>
-
-<input id="search" placeholder="प्रश्न खोजें..." oninput="renderQuestions()">
-</div>
-
-<div class="panel">
-<h2 id="heading">अध्याय के प्रश्न और हल</h2>
-<p class="small" id="notice">नीचे दिए गए प्रश्न अभ्यास के लिए हैं।</p>
-<div id="questions"></div>
-</div>
-
-<div class="panel">
-<h3>पढ़ाई के लिए जरूरी सूचना</h3>
-<p>यह वेबसाइट अभ्यास के लिए मौलिक प्रश्न और उनके हल दिखाती है। अपने बोर्ड के नवीनतम पाठ्यक्रम और पाठ्यपुस्तक से अध्यायों का मिलान जरूर करें।</p>
-<p><a href="https://ncert.nic.in/textbook.php" target="_blank">NCERT की आधिकारिक किताबें खोलें</a></p>
-<p><a href="https://upmsp.edu.in/Board_Syllabus.aspx" target="_blank">UP Board का पाठ्यक्रम देखें</a></p>
-</div>
-</main>
-
-<footer>SR Class 10 Study Hub</footer>
-
-<script>
-const data = {
-"गणित": {
-"वास्तविक संख्याएँ": [
-{q:"यूक्लिड विभाजन एल्गोरिथ्म क्या है?",a:"यदि a और b दो धनात्मक पूर्णांक हैं, जहाँ a > b, तो ऐसे अद्वितीय पूर्णांक q और r मिलते हैं कि a = bq + r, जहाँ 0 ≤ r < b। इसी प्रक्रिया को बार-बार अपनाकर महत्तम समापवर्तक निकाला जाता है।"},
-{q:"135 और 225 का महत्तम समापवर्तक ज्ञात कीजिए।",a:"यूक्लिड विधि से: 225 = 135 × 1 + 90। 135 = 90 × 1 + 45। 90 = 45 × 2 + 0। अतः अंतिम अशून्य शेषफल 45 है। इसलिए महत्तम समापवर्तक = 45।"},
-{q:"अभाज्य गुणनखंड विधि से 140 का अभाज्य गुणनखंड कीजिए।",a:"140 = 2 × 70 = 2 × 2 × 35 = 2² × 5 × 7। अतः 140 के अभाज्य गुणनखंड 2, 5 और 7 हैं।"}
-],
-"बहुपद": [
-{q:"द्विघात बहुपद के शून्यकों और गुणांकों में संबंध लिखिए।",a:"यदि बहुपद ax² + bx + c के शून्यक α और β हों, तो शून्यकों का योग α + β = −b/a तथा शून्यकों का गुणनफल αβ = c/a होता है।"},
-{q:"x² − 5x + 6 के शून्यक ज्ञात कीजिए।",a:"x² − 5x + 6 = (x − 2)(x − 3)। अतः x = 2 या x = 3। इसलिए शून्यक 2 और 3 हैं।"}
-],
-"दो चर वाले रैखिक समीकरण": [
-{q:"दो चर वाले रैखिक समीकरण का सामान्य रूप लिखिए।",a:"दो चर वाले रैखिक समीकरण का सामान्य रूप ax + by + c = 0 है, जहाँ a और b दोनों एक साथ शून्य नहीं होते।"},
-{q:"x + y = 7 और x − y = 1 को हल कीजिए।",a:"दोनों समीकरण जोड़ने पर 2x = 8, इसलिए x = 4। अब x + y = 7 में रखने पर 4 + y = 7, इसलिए y = 3। उत्तर: x = 4, y = 3।"}
-],
-"द्विघात समीकरण": [
-{q:"द्विघात समीकरण का सामान्य रूप क्या है?",a:"द्विघात समीकरण का सामान्य रूप ax² + bx + c = 0 है, जहाँ a ≠ 0।"},
-{q:"x² − 5x + 6 = 0 हल कीजिए।",a:"x² − 5x + 6 = 0। गुणनखंड करने पर (x − 2)(x − 3) = 0। अतः x = 2 या x = 3।"}
-],
-"समांतर श्रेणी": [
-{q:"समांतर श्रेणी किसे कहते हैं?",a:"ऐसी संख्या श्रेणी जिसमें प्रत्येक पद और उसके ठीक पहले वाले पद का अंतर समान हो, समांतर श्रेणी कहलाती है। इस समान अंतर को सार्व अंतर कहते हैं।"},
-{q:"समांतर श्रेणी का nवाँ पद लिखिए।",a:"यदि प्रथम पद a और सार्व अंतर d हो, तो nवाँ पद aₙ = a + (n − 1)d होता है।"}
-],
-"त्रिभुज": [
-{q:"समरूप त्रिभुज किसे कहते हैं?",a:"दो त्रिभुज समरूप कहलाते हैं यदि उनके संगत कोण बराबर हों और उनकी संगत भुजाएँ समान अनुपात में हों।"},
-{q:"पाइथागोरस प्रमेय लिखिए।",a:"किसी समकोण त्रिभुज में कर्ण का वर्ग, अन्य दो भुजाओं के वर्गों के योग के बराबर होता है। यदि भुजाएँ a, b और कर्ण c हो, तो c² = a² + b²।"}
-]
-},
-"विज्ञान": {
-"रासायनिक अभिक्रियाएँ एवं समीकरण": [
-{q:"रासायनिक अभिक्रिया किसे कहते हैं?",a:"वह प्रक्रिया जिसमें एक या अधिक पदार्थ रासायनिक परिवर्तन द्वारा नए पदार्थों में बदल जाते हैं, रासायनिक अभिक्रिया कहलाती है। उदाहरण: 2Mg + O₂ → 2MgO।"},
-{q:"संतुलित रासायनिक समीकरण क्या है?",a:"जिस रासायनिक समीकरण में अभिकारकों और उत्पादों की ओर प्रत्येक तत्व के परमाणुओं की संख्या समान होती है, उसे संतुलित रासायनिक समीकरण कहते हैं।"}
-],
-"अम्ल, क्षारक एवं लवण": [
-{q:"अम्ल और क्षारक में अंतर लिखिए।",a:"अम्ल जलीय विलयन में H⁺ आयन देते हैं और नीले लिटमस को लाल करते हैं। क्षारक जलीय विलयन में OH⁻ आयन देते हैं और लाल लिटमस को नीला करते हैं।"},
-{q:"pH मान क्या बताता है?",a:"pH मान किसी विलयन की अम्लीयता या क्षारीयता बताता है। सामान्यतः pH 7 से कम अम्लीय, 7 उदासीन और 7 से अधिक क्षारीय होता है।"}
-],
-"जीवन प्रक्रियाएँ": [
-{q:"जीवन प्रक्रियाएँ क्या हैं?",a:"जीवों में जीवन बनाए रखने के लिए होने वाली आवश्यक क्रियाएँ जीवन प्रक्रियाएँ कहलाती हैं। प्रमुख प्रक्रियाएँ पोषण, श्वसन, परिवहन और उत्सर्जन हैं।"},
-{q:"प्रकाश संश्लेषण क्या है?",a:"हरे पौधे सूर्य के प्रकाश और क्लोरोफिल की उपस्थिति में कार्बन डाइऑक्साइड तथा जल से भोजन बनाते हैं और ऑक्सीजन छोड़ते हैं। इसे प्रकाश संश्लेषण कहते हैं।"}
-]
-},
-"सामाजिक विज्ञान": {
-"संसाधन एवं विकास": [
-{q:"संसाधन किसे कहते हैं?",a:"पर्यावरण में उपलब्ध वे सभी वस्तुएँ जो मानव की आवश्यकताओं को पूरा कर सकती हैं और जिनका उपयोग तकनीकी रूप से संभव, आर्थिक रूप से उपयोगी तथा सांस्कृतिक रूप से स्वीकार्य हो, संसाधन कहलाती हैं।"},
-{q:"संसाधनों का संरक्षण क्यों आवश्यक है?",a:"संसाधन सीमित हैं और उनका अत्यधिक दोहन पर्यावरण को नुकसान पहुँचाता है। भविष्य की पीढ़ियों की आवश्यकताओं को पूरा करने तथा संतुलित विकास के लिए संसाधनों का संरक्षण आवश्यक है।"}
-],
-"यूरोप में राष्ट्रवाद का उदय": [
-{q:"राष्ट्रवाद से क्या तात्पर्य है?",a:"राष्ट्रवाद वह भावना है जिसमें किसी देश के लोग साझा इतिहास, संस्कृति, भाषा या राजनीतिक पहचान के आधार पर अपने राष्ट्र के प्रति एकता और निष्ठा अनुभव करते हैं।"}
-]
-},
-"हिंदी": {
-"अपठित गद्यांश एवं लेखन": [
-{q:"अनुच्छेद लेखन की विशेषताएँ लिखिए।",a:"अनुच्छेद एक ही विषय पर केंद्रित होना चाहिए। इसमें विचारों का क्रमबद्ध विकास, सरल भाषा, स्पष्ट वाक्य और उचित शीर्षक होना चाहिए। अनावश्यक विस्तार से बचना चाहिए।"},
-{q:"पत्र लेखन में किन बातों का ध्यान रखना चाहिए?",a:"पत्र में प्रेषक का पता, दिनांक, संबोधन, विषय, मुख्य संदेश, समापन और नाम उचित क्रम में लिखना चाहिए। भाषा पत्र के उद्देश्य के अनुसार औपचारिक या अनौपचारिक होनी चाहिए।"}
-]
-},
-"हिंदी व्याकरण": {
-"संधि": [
-{q:"संधि किसे कहते हैं?",a:"दो वर्णों के मेल से होने वाले विकार या परिवर्तन को संधि कहते हैं। संधि के प्रमुख भेद स्वर संधि, व्यंजन संधि और विसर्ग संधि हैं।"},
-{q:"विद्यालय शब्द का संधि-विच्छेद कीजिए।",a:"विद्यालय = विद्या + आलय। यहाँ आ + आ के मेल से दीर्घ स्वर आ बना है।"}
-],
-"समास": [
-{q:"समास किसे कहते हैं?",a:"दो या दो से अधिक शब्दों के मेल से बने संक्षिप्त शब्द को समास कहते हैं। समास में शब्दों के बीच के विभक्ति चिह्न प्रायः हट जाते हैं।"}
-]
-},
-"English": {
-"Grammar": [
-{q:"What is a noun?",a:"A noun is the name of a person, place, animal, thing, or idea. Examples: Ram, Delhi, book, honesty."},
-{q:"Change into passive voice: Ram writes a letter.",a:"A letter is written by Ram. Explanation: The object 'a letter' becomes the subject. The verb 'writes' changes to 'is written'."}
-],
-"Writing": [
-{q:"Write the format of a formal letter.",a:"A formal letter generally includes: sender's address, date, receiver's address, subject, salutation, body, complimentary close, and sender's name."}
-]
-}
-};
-
-const subjectEl=document.getElementById("subject");
-const chapterEl=document.getElementById("chapter");
-
-function loadSubjects(){
-subjectEl.innerHTML="";
-Object.keys(data).forEach(s=>{
-let o=document.createElement("option");
-o.value=s;o.textContent=s;subjectEl.appendChild(o);
-});
-loadChapters();
-}
-function loadChapters(){
-chapterEl.innerHTML="";
-Object.keys(data[subjectEl.value]).forEach(c=>{
-let o=document.createElement("option");
-o.value=c;o.textContent=c;chapterEl.appendChild(o);
-});
-renderQuestions();
-}
-function renderQuestions(){
-const subject=subjectEl.value;
-const chapter=chapterEl.value;
-const search=document.getElementById("search").value.trim().toLowerCase();
-const list=(data[subject]&&data[subject][chapter])||[];
-document.getElementById("heading").textContent=subject+" — "+chapter;
-const box=document.getElementById("questions");
-box.innerHTML="";
-let shown=0;
-list.forEach((item,i)=>{
-if(search && !(item.q+" "+item.a).toLowerCase().includes(search)) return;
-shown++;
-const div=document.createElement("div");
-div.className="question";
-const q=document.createElement("h3");
-q.textContent="प्रश्न "+(i+1)+": "+item.q;
-const tag=document.createElement("span");
-tag.className="tag";tag.textContent="लिखित प्रश्न";
-const ans=document.createElement("div");
-ans.className="answer";
-const strong=document.createElement("strong");
-strong.textContent="उत्तर / पूरा हल:";
-const p=document.createElement("p");
-p.textContent=item.a;
-ans.append(strong,p);
-div.append(tag,q,ans);
-box.appendChild(div);
-});
-if(shown===0) box.textContent="इस अध्याय में अभी यह प्रश्न उपलब्ध नहीं है।";
-}
-subjectEl.addEventListener("change",loadChapters);
-chapterEl.addEventListener("change",renderQuestions);
-loadSubjects();
-</script>
-</body>
-</html>
-
