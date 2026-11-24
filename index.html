@@ -1,208 +1,122 @@
 
-function openChapter(chapter) {
-  const subject = selected;
-  const key = subject + "|" + chapter;
-  const storageKey = "SR_CLASS10_QUESTION_BANK";
-
-  function getBank() {
-    try {
-      return JSON.parse(localStorage.getItem(storageKey) || "{}");
-    } catch {
-      return {};
-    }
-  }
-
-  function saveBank(bank) {
-    localStorage.setItem(storageKey, JSON.stringify(bank));
-  }
-
-  const bank = getBank();
-  const questions = bank[key] || [];
-
-  const modal = document.createElement("div");
-  modal.className = "modal-back open";
-
-  modal.innerHTML = `
-    <div class="modal" style="width:min(100%,720px)">
-      <div class="modal-head">
-        <h2>${chapter}</h2>
-        <button class="close">×</button>
-      </div>
-
-      <p class="sub">
-        ${subject} • अध्यायवार प्रश्न-उत्तर
-      </p>
-
-      <div id="questionList"></div>
-
-      <details style="margin-top:20px">
-        <summary style="font-weight:bold;cursor:pointer">
-          + नया प्रश्न जोड़ें
-        </summary>
-
-        <form id="addQuestion"
-          style="display:grid;gap:12px;margin-top:15px">
-
-          <textarea name="question"
-            placeholder="प्रश्न लिखें"
-            required rows="3"
-            style="padding:12px;border:1px solid #ddd;border-radius:10px">
-          </textarea>
-
-          <textarea name="answer"
-            placeholder="उत्तर या हल लिखें"
-            required rows="4"
-            style="padding:12px;border:1px solid #ddd;border-radius:10px">
-          </textarea>
-
-          <select name="type"
-            style="padding:12px;border:1px solid #ddd;border-radius:10px">
-            <option>महत्वपूर्ण प्रश्न</option>
-            <option>लघु उत्तरीय</option>
-            <option>दीर्घ उत्तरीय</option>
-            <option>बहुविकल्पीय प्रश्न</option>
-          </select>
-
-          <button class="primary" type="submit">
-            प्रश्न सुरक्षित करें
-          </button>
-        </form>
-      </details>
-
-      <button class="primary" id="downloadQuestions"
-        style="margin-top:15px">
-        प्रश्न डाउनलोड करें
-      </button>
+  
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SR Class 10 Study Hub</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#17233b;--muted:#64748b;--primary:#4f46e5;--accent:#06b6d4;--line:#e5eaf2}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,"Noto Sans Devanagari",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#111c4e,#4338ca 58%,#0891b2);color:white;padding:28px max(5%,calc((100% - 1150px)/2));}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.brand{font-weight:900;font-size:1.15rem;letter-spacing:.3px}.pill{background:#ffffff22;border:1px solid #ffffff44;border-radius:30px;padding:8px 13px;font-size:.85rem}
+.hero{padding:38px 0 20px;max-width:760px}.hero h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.1;margin:0 0 14px}.hero p{color:#e0e7ff;font-size:1.05rem;line-height:1.7;margin:0}
+.searchwrap{margin-top:25px;display:flex;gap:10px;max-width:720px}.searchwrap input{flex:1;min-width:0;padding:16px 18px;border:0;border-radius:14px;font-size:1rem;outline:3px solid transparent}.searchwrap input:focus{outline-color:#a5b4fc}.searchwrap button,.btn{border:0;border-radius:12px;padding:13px 17px;font-weight:700;cursor:pointer;background:var(--primary);color:white}.searchwrap button{background:#0f172a}
+main{max-width:1150px;margin:0 auto;padding:28px 20px 60px}.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:15px 0 18px}.sectionhead h2{margin:0;font-size:1.55rem}.muted{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 28px}.stat,.subject,.feature{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 5px 18px #1e293b08}.stat strong{display:block;font-size:1.6rem;margin-bottom:4px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}.filter{background:white;border:1px solid var(--line);color:var(--ink);border-radius:30px;padding:9px 14px;cursor:pointer}.filter.active{background:#e0e7ff;border-color:#a5b4fc;color:#3730a3;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.subject{display:flex;flex-direction:column;gap:12px;transition:.2s}.subject:hover{transform:translateY(-3px);box-shadow:0 14px 30px #1e293b12}.subjecttop{display:flex;align-items:center;gap:12px}.icon{width:46px;height:46px;border-radius:14px;background:#eef2ff;display:grid;place-items:center;font-size:1.4rem}.subject h3{margin:0;font-size:1.1rem}.subject p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.5}.chapters{display:flex;flex-wrap:wrap;gap:7px}.chapter{font-size:.78rem;background:#f1f5f9;border-radius:8px;padding:6px 8px;color:#475569}.subject .btn{margin-top:auto;width:100%}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}.feature h3{margin:0 0 8px}.feature p{margin:0;color:var(--muted);line-height:1.6;font-size:.92rem}
+footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid var(--line)}.empty{display:none;background:white;border:1px dashed #cbd5e1;border-radius:16px;padding:28px;text-align:center;color:var(--muted)}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.features{grid-template-columns:1fr}.hero{padding-top:28px}}
+@media(max-width:560px){.grid,.stats{grid-template-columns:1fr}.searchwrap{flex-direction:column}.searchwrap button{width:100%}main{padding-inline:14px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><div class="brand">📘 SR CLASS 10 STUDY HUB</div><div class="pill">कक्षा 10 • सीखो, समझो, आगे बढ़ो</div></div>
+  <div class="hero">
+    <h1>पढ़ाई अब होगी<br>आसान और स्मार्ट।</h1>
+    <p>अपने विषय और अध्याय खोजें। सरल भाषा में पढ़ें, अभ्यास करें और अपनी तैयारी को बेहतर बनाएं।</p>
+    <div class="searchwrap">
+      <input id="search" type="search" placeholder="अध्याय या विषय खोजें… जैसे वास्तविक संख्या" aria-label="विषय या अध्याय खोजें">
+      <button id="clear" type="button">खोज साफ़ करें</button>
     </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  function renderQuestions() {
-    const list = modal.querySelector("#questionList");
-    const current = getBank()[key] || [];
-
-    if (current.length === 0) {
-      list.innerHTML = `
-        <p class="notice">
-          अभी इस अध्याय में प्रश्न नहीं हैं।
-          नीचे नया प्रश्न जोड़ें।
-        </p>
-      `;
-      return;
-    }
-
-    list.innerHTML = current.map((item, i) => `
-      <div style="
-        background:white;
-        border:1px solid #e6eaf4;
-        border-radius:14px;
-        padding:15px;
-        margin:12px 0">
-
-        <small style="color:#4358db">
-          प्रश्न ${i + 1} • ${item.type}
-        </small>
-
-        <h3 style="font-size:16px;line-height:1.6">
-          ${escapeHTML(item.question)}
-        </h3>
-
-        <button class="primary"
-          data-answer="${i}">
-          उत्तर देखें
-        </button>
-
-        <div class="hidden"
-          data-answer-box="${i}"
-          style="
-            white-space:pre-wrap;
-            background:#f0faf5;
-            padding:12px;
-            margin-top:12px;
-            border-radius:10px">
-          ${escapeHTML(item.answer)}
-        </div>
-      </div>
-    `).join("");
-
-    list.querySelectorAll("[data-answer]").forEach(button => {
-      button.onclick = () => {
-        const box = list.querySelector(
-          '[data-answer-box="' + button.dataset.answer + '"]'
-        );
-
-        box.classList.toggle("hidden");
-
-        button.textContent =
-          box.classList.contains("hidden")
-          ? "उत्तर देखें"
-          : "उत्तर छिपाएँ";
-      };
-    });
-  }
-
-  function escapeHTML(text) {
-    return String(text).replace(/[&<>"']/g, char => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    })[char]);
-  }
-
-  renderQuestions();
-
-  modal.querySelector(".close").onclick = () => {
-    modal.remove();
-  };
-
-  modal.addEventListener("click", event => {
-    if (event.target === modal) {
-      modal.remove();
-    }
-  });
-
-  modal.querySelector("#addQuestion").onsubmit = event => {
-    event.preventDefault();
-
-    const form = new FormData(event.target);
-    const bank = getBank();
-
-    if (!bank[key]) {
-      bank[key] = [];
-    }
-
-    bank[key].push({
-      question: form.get("question").trim(),
-      answer: form.get("answer").trim(),
-      type: form.get("type")
-    });
-
-    saveBank(bank);
-    event.target.reset();
-    renderQuestions();
-
-    alert("प्रश्न सुरक्षित हो गया!");
-  };
-
-  modal.querySelector("#downloadQuestions").onclick = () => {
-    const data = getBank();
-
-    const blob = new Blob(
-      [JSON.stringify(data, null, 2)],
-      { type: "application/json" }
-    );
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = "SR-Class10-Questions.json";
-    link.click();
-
-    URL.revokeObjectURL(url);
-  };
+  </div>
+</header>
+<main>
+  <div class="stats">
+    <div class="stat"><strong>6</strong><span class="muted">मुख्य विषय</span></div>
+    <div class="stat"><strong>30+</strong><span class="muted">अध्यायों के लिए जगह</span></div>
+    <div class="stat"><strong>∞</strong><span class="muted">अभ्यास के मौके</span></div>
+  </div>
+  <div class="sectionhead"><div><h2>अपने विषय चुनें</h2><p class="muted">किसी विषय पर क्लिक करके अध्याय देखें।</p></div><span class="muted" id="count">6 विषय</span></div>
+  <div class="filters" id="filters">
+    <button class="filter active" data-filter="all">सभी</button>
+    <button class="filter" data-filter="math">गणित</button>
+    <button class="filter" data-filter="science">विज्ञान</button>
+    <button class="filter" data-filter="social">सामाजिक विज्ञान</button>
+    <button class="filter" data-filter="language">भाषाएँ</button>
+  </div>
+  <div class="grid" id="subjects">
+    <article class="subject" data-category="math" data-search="गणित mathematics वास्तविक संख्या बहुपद दो चर वाले रैखिक समीकरण द्विघात समीकरण समांतर श्रेणी त्रिभुज निर्देशांक ज्यामिति त्रिकोणमिति वृत्त क्षेत्रफल पृष्ठीय क्षेत्रफल आयतन सांख्यिकी प्रायिकता">
+      <div class="subjecttop"><div class="icon">📐</div><div><h3>गणित</h3><span class="muted">Mathematics</span></div></div>
+      <p>सूत्र, उदाहरण और प्रश्नों के साथ गणित की तैयारी करें।</p>
+      <div class="chapters"><span class="chapter">वास्तविक संख्याएँ</span><span class="chapter">बहुपद</span><span class="chapter">रैखिक समीकरण</span><span class="chapter">द्विघात समीकरण</span><span class="chapter">समांतर श्रेणी</span><span class="chapter">त्रिभुज</span><span class="chapter">निर्देशांक ज्यामिति</span><span class="chapter">त्रिकोणमिति</span></div>
+      <button class="btn" onclick="openSubject('गणित')">अध्याय देखें →</button>
+    </article>
+    <article class="subject" data-category="science" data-search="विज्ञान science रसायन अभिक्रियाएँ अम्ल क्षार लवण धातु अधातु कार्बन जीवन प्रक्रियाएँ नियंत्रण समन्वय प्रजनन आनुवंशिकता प्रकाश विद्युत चुंबकीय प्रभाव ऊर्जा पर्यावरण">
+      <div class="subjecttop"><div class="icon">🔬</div><div><h3>विज्ञान</h3><span class="muted">Science</span></div></div>
+      <p>भौतिकी, रसायन विज्ञान और जीव विज्ञान को सरल भाषा में समझें।</p>
+      <div class="chapters"><span class="chapter">रासायनिक अभिक्रियाएँ</span><span class="chapter">अम्ल, क्षार और लवण</span><span class="chapter">धातु-अधातु</span><span class="chapter">जीवन प्रक्रियाएँ</span><span class="chapter">प्रकाश</span><span class="chapter">विद्युत</span></div>
+      <button class="btn" onclick="openSubject('विज्ञान')">अध्याय देखें →</button>
+    </article>
+    <article class="subject" data-category="social" data-search="सामाजिक विज्ञान social science इतिहास भूगोल राजनीति विज्ञान अर्थशास्त्र लोकतंत्र विकास संसाधन कृषि राष्ट्रीयता">
+      <div class="subjecttop"><div class="icon">🌍</div><div><h3>सामाजिक विज्ञान</h3><span class="muted">Social Science</span></div></div>
+      <p>इतिहास, भूगोल, राजनीति और अर्थव्यवस्था के मुख्य बिंदु।</p>
+      <div class="chapters"><span class="chapter">इतिहास</span><span class="chapter">भूगोल</span><span class="chapter">लोकतंत्र</span><span class="chapter">अर्थव्यवस्था</span></div>
+      <button class="btn" onclick="openSubject('सामाजिक विज्ञान')">अध्याय देखें →</button>
+    </article>
+    <article class="subject" data-category="language" data-search="हिंदी hindi क्षितिज कृतिका व्याकरण लेखन">
+      <div class="subjecttop"><div class="icon">📖</div><div><h3>हिंदी</h3><span class="muted">Hindi</span></div></div>
+      <p>पाठ का सार, प्रश्न-उत्तर और लेखन अभ्यास।</p>
+      <div class="chapters"><span class="chapter">क्षितिज</span><span class="chapter">कृतिका</span><span class="chapter">व्याकरण</span><span class="chapter">लेखन</span></div>
+      <button class="btn" onclick="openSubject('हिंदी')">अध्याय देखें →</button>
+    </article>
+    <article class="subject" data-category="language" data-search="अंग्रेज़ी english first flight footprints without feet grammar writing">
+      <div class="subjecttop"><div class="icon">🔤</div><div><h3>अंग्रेज़ी</h3><span class="muted">English</span></div></div>
+      <p>पाठों का सार, शब्दार्थ और व्याकरण की प्रैक्टिस।</p>
+      <div class="chapters"><span class="chapter">First Flight</span><span class="chapter">Footprints Without Feet</span><span class="chapter">Grammar</span></div>
+      <button class="btn" onclick="openSubject('अंग्रेज़ी')">अध्याय देखें →</button>
+    </article>
+    <article class="subject" data-category="social" data-search="संस्कृत sanskrit शेमुषी व्याकरण अनुवाद">
+      <div class="subjecttop"><div class="icon">🪷</div><div><h3>संस्कृत</h3><span class="muted">Sanskrit</span></div></div>
+      <p>श्लोक, अनुवाद, व्याकरण और पाठ-अभ्यास।</p>
+      <div class="chapters"><span class="chapter">शेमुषी</span><span class="chapter">व्याकरण</span><span class="chapter">अनुवाद</span></div>
+      <button class="btn" onclick="openSubject('संस्कृत')">अध्याय देखें →</button>
+    </article>
+  </div>
+  <div class="empty" id="empty">कोई विषय नहीं मिला। दूसरा शब्द खोजकर देखें।</div>
+  <section class="features">
+    <div class="feature"><h3>🔎 स्मार्ट सर्च</h3><p>हिंदी या अंग्रेज़ी में विषय और अध्याय खोजें।</p></div>
+    <div class="feature"><h3>📝 अभ्यास</h3><p>हर अध्याय में अपने प्रश्न और नोट्स जोड़ने के लिए तैयार ढाँचा।</p></div>
+    <div class="feature"><h3>📱 मोबाइल फ्रेंडली</h3><p>मोबाइल, टैबलेट और कंप्यूटर—हर स्क्रीन पर अच्छा दिखेगा।</p></div>
+  </section>
+</main>
+<footer>© 2026 SR Class 10 Study Hub • मेहनत आज, सफलता कल ✨</footer>
+<script>
+const search=document.getElementById('search');
+const cards=[...document.querySelectorAll('.subject')];
+const filters=[...document.querySelectorAll('.filter')];
+let active='all';
+function update(){
+ const q=search.value.trim().toLocaleLowerCase();
+ let shown=0;
+ cards.forEach(card=>{
+   const matchesText=(card.dataset.search+' '+card.innerText).toLocaleLowerCase().includes(q);
+   const matchesCategory=active==='all'||card.dataset.category===active;
+   const visible=matchesText&&matchesCategory;
+   card.style.display=visible?'flex':'none';
+   if(visible)shown++;
+ });
+ document.getElementById('count').textContent=shown+' विषय';
+ document.getElementById('empty').style.display=shown?'none':'block';
 }
-function openChapter(chapter){
+search.addEventListener('input',update);
+document.getElementById('clear').addEventListener('click',()=>{search.value='';active='all';filters.forEach(b=>b.classList.toggle('active',b.dataset.filter==='all'));update();search.focus();});
+filters.forEach(btn=>btn.addEventListener('click',()=>{active=btn.dataset.filter;filters.forEach(b=>b.classList.toggle('active',b===btn));update();}));
+function openSubject(name){
+ alert(name+' के अध्याय और प्रश्न यहाँ जोड़े जा सकते हैं।\\n\\nआप अपनी किताब के अध्यायों के नाम/प्रश्न जोड़कर इस वेबसाइट को पूरा कर सकते हैं।');
+}
+</script>
+</body>
+      </html>
